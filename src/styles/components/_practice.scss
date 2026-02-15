@@ -86,6 +86,17 @@
     line-height: 1.4;
   }
 
+  &__location-link {
+    color: $color-primary;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+      color: $color-primary-dark;
+      text-decoration: underline;
+    }
+  }
+
   &__date,
   &__time,
   &__location,

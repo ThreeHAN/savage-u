@@ -101,7 +101,23 @@ export default function Practice() {
                       : ` ${formatTime(practice.startTime)}`}
                     {' - '}
                     {formatTime(practice.endTime)}
-                    {practice.location?.name ? `, @${practice.location.name}` : ''}
+                    {practice.location?.name ? (
+                      practice.location?.mapUrl ? (
+                        <>
+                          {', @ '}
+                          <a
+                            href={practice.location.mapUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="practice-card__location-link"
+                          >
+                            {practice.location.name}
+                          </a>
+                        </>
+                      ) : (
+                        `, @ ${practice.location.name}`
+                      )
+                    ) : null}
                   </div>
 
                   {practice.location?.parkingInfo && (
@@ -111,16 +127,6 @@ export default function Practice() {
                   )}
                   {practice.location?.notes && (
                     <div className="practice-card__address">{practice.location.notes}</div>
-                  )}
-                  {practice.location?.mapUrl && (
-                    <a
-                      href={practice.location.mapUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="practice-card__map-link"
-                    >
-                      View on Maps
-                    </a>
                   )}
 
                   {practice.notes && (
