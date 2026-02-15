@@ -1,0 +1,157 @@
+@use '../variables' as *;
+@use '../mixins' as *;
+
+.practice {
+  padding: 6rem 2.5rem;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 70%);
+  min-height: 100vh;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: $color-text-light;
+    margin-bottom: 3rem;
+    text-align: center;
+
+    @include mobile {
+      font-size: 2rem;
+    }
+  }
+
+  &__empty {
+    text-align: center;
+    color: $color-text-light;
+    font-size: 1.1rem;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+
+    @include tablet {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+
+    @include mobile {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.practice-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid $color-text-gray;
+    padding-bottom: 0.75rem;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: $color-bg-navy;
+    margin: 0;
+    flex: 1;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  &__summary {
+    color: $color-bg-navy;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  &__date,
+  &__time,
+  &__location,
+  &__notes {
+    color: $color-bg-navy;
+    line-height: 1.6;
+
+    strong {
+      display: block;
+      color: $color-primary;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  &__address {
+    font-size: 0.9rem;
+    color: $color-text-gray;
+    margin: 0.5rem 0 0 0;
+  }
+
+  &__map-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background: $color-primary;
+    color: $color-bg-navy;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: $color-primary-dark;
+    }
+  }
+
+  &__notes {
+    p {
+      margin: 0.5rem 0 0 0;
+      color: $color-text-gray;
+      font-style: italic;
+    }
+  }
+}
+
+.status {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  &--scheduled {
+    background: #e3f2fd;
+    color: #1976d2;
+  }
+
+  &--cancelled {
+    background: #ffebee;
+    color: #c62828;
+  }
+
+  &--completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+}

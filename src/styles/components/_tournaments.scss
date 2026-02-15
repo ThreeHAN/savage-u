@@ -1,0 +1,222 @@
+@use '../variables' as *;
+@use '../mixins' as *;
+
+.tournaments {
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, $color-bg-navy 0%, $color-bg-blue 100%);
+  color: $color-text-light;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  &__title {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 3rem;
+
+    @include mobile {
+      font-size: 2rem;
+    }
+  }
+
+  &__section {
+    margin-bottom: 3.5rem;
+  }
+
+  &__section-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: $color-primary;
+  }
+
+  &__empty {
+    color: $color-text-gray;
+    font-size: 1.1rem;
+  }
+
+  &__grid,
+  &__games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+
+    @include tablet {
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+
+    @include mobile {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.tournament-card,
+.game-card {
+  background: $color-text-light;
+  color: $color-bg-navy;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: transform $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+  }
+}
+
+.tournament-card {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 2px solid $color-text-gray;
+    padding-bottom: 1rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__dates,
+  &__location,
+  &__notes,
+  &__games {
+    line-height: 1.6;
+
+    strong {
+      display: block;
+      color: $color-primary;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+  }
+
+  &__address {
+    font-size: 0.95rem;
+    color: $color-bg-blue;
+    margin: 0.5rem 0 0 0;
+  }
+
+  &__map-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: $color-primary;
+    color: $color-bg-navy;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background $transition-fast;
+
+    &:hover {
+      background: $color-primary-dark;
+    }
+  }
+
+  &__notes {
+    p {
+      margin: 0.5rem 0 0 0;
+      color: $color-bg-blue;
+      font-style: italic;
+    }
+  }
+
+  &__games-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__game {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background: rgba(0, 212, 255, 0.08);
+  }
+
+  &__game-opponent {
+    font-weight: 600;
+  }
+
+  &__game-time {
+    font-size: 0.95rem;
+    color: $color-bg-blue;
+  }
+
+  &__empty {
+    color: $color-text-gray;
+    margin: 0.25rem 0 0 0;
+  }
+}
+
+.game-card {
+  &__title {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__date,
+  &__time {
+    strong {
+      display: block;
+      color: $color-primary;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+  }
+}
+
+.status {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  &--upcoming {
+    background: #e3f2fd;
+    color: #1976d2;
+  }
+
+  &--in_progress {
+    background: #fff8e1;
+    color: #f9a825;
+  }
+
+  &--completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &--cancelled {
+    background: #ffebee;
+    color: #c62828;
+  }
+}
