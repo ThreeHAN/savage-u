@@ -17,6 +17,9 @@ concurrency:
 jobs:
   build: 
     runs-on: ubuntu-latest
+    env:
+      VITE_SANITY_PROJECT_ID: ${{ secrets.VITE_SANITY_PROJECT_ID }}
+      VITE_SANITY_DATASET: ${{ secrets.VITE_SANITY_DATASET }}
     steps: 
       - name: Checkout
         uses: actions/checkout@v4
