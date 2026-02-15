@@ -1,0 +1,69 @@
+@use 'variables' as *;
+
+// Responsive breakpoints
+@mixin mobile {
+  @media (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+// Button styles
+@mixin button-primary {
+  background-color: $color-primary;
+  color: $color-bg-navy;
+  border: none;
+  padding: $spacing-sm $spacing-lg * 1.25;
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: transform $transition-fast, box-shadow $transition-fast;
+  text-transform: uppercase;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-glow-hover;
+  }
+}
+
+// Card hover effect
+@mixin card-hover {
+  transition: transform $transition-fast;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// Flex center
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Container
+@mixin container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+}
+
+// Text outline
+@mixin text-outline($color: #fff, $width: 2px) {
+  -webkit-text-stroke: #{$width} $color;
+  paint-order: stroke fill;
+}
+
+// Heavy text outline for display text
+@mixin text-outline-display {
+  color: $color-primary;
+  -webkit-text-stroke: 4px #fff;
+  paint-order: stroke fill;
+}

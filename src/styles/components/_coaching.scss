@@ -1,0 +1,65 @@
+@use '../variables' as *;
+@use '../mixins' as *;
+
+.coaching {
+  background-color: $color-bg-navy;
+  padding: $spacing-2xl $spacing-lg;
+  scroll-margin-top: 80px;
+
+  &-container {
+    @include container;
+  }
+
+  &-content {
+    @include flex-center;
+    gap: $spacing-xl;
+    flex-wrap: wrap;
+
+    @include mobile {
+      flex-direction: column;
+      gap: $spacing-lg;
+    }
+  }
+}
+
+.coach-image-wrapper {
+  position: relative;
+}
+
+.coach-image {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid $color-primary;
+  box-shadow: $shadow-glow;
+
+  @include mobile {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+.coach-info {
+  text-align: center;
+  color: $color-text-light;
+}
+
+.coach-name {
+  font-size: 1.8rem;
+  margin: 0 0 $spacing-sm;
+  font-weight: bold;
+}
+
+.coach-tagline {
+  font-size: 1.1rem;
+  margin: $spacing-xs 0;
+  color: $color-text-gray;
+}
+
+.coach-button {
+  @include button-primary;
+  padding: 0.8rem $spacing-lg;
+  font-size: 0.9rem;
+  margin-top: $spacing-md;
+}

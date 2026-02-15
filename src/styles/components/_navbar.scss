@@ -1,0 +1,128 @@
+@use '../variables' as *;
+@use '../mixins' as *;
+
+.navbar {
+  background-color: $color-bg-navy;
+  padding: $spacing-sm 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+
+  &-container {
+    @include container;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &-logo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  &-menu {
+    display: flex;
+    list-style: none;
+    gap: $spacing-lg;
+    margin: 0;
+    padding: 0;
+    will-change: auto;
+
+    a {
+      color: $color-primary;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color $transition-fast;
+      white-space: nowrap;
+
+      &:hover {
+        color: $color-text-light;
+      }
+    }
+
+    @include mobile {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      background-color: $color-bg-navy;
+      padding: $spacing-lg;
+      gap: $spacing-md;
+      max-height: 0;
+      overflow: hidden;
+      visibility: hidden;
+      transition: max-height 0.3s ease, visibility 0.3s ease;
+      contain: layout style;
+
+      &.active {
+        max-height: 300px;
+        visibility: visible;
+        border-bottom: 2px solid $color-primary;
+      }
+    }
+  }
+}
+
+.hamburger {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 6px;
+
+  span {
+    width: 25px;
+    height: 3px;
+    background-color: $color-primary;
+    transition: all 0.3s ease;
+    display: block;
+  }
+
+  @include mobile {
+    display: flex;
+  }
+
+  &.active {
+    span:nth-child(1) {
+      transform: rotate(45deg) translateY(12px);
+    }
+
+    span:nth-child(2) {
+      opacity: 0;
+    }
+
+    span:nth-child(3) {
+      transform: rotate(-45deg) translateY(-12px);
+    }
+  }
+}
+
+.logo-icon {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+}
+
+.logo-text {
+  font-family: $font-family-display;
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: $color-primary;
+}
+
+.search-button {
+  background: transparent;
+  border: none;
+  color: $color-primary;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-text-light;
+  }
+}

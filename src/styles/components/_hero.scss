@@ -1,0 +1,51 @@
+@use '../variables' as *;
+@use '../mixins' as *;
+
+.hero {
+  min-height: 100vh;
+  @include flex-center;
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.7)),
+    url('/savage-u-logo.png') center/contain no-repeat;
+  background-color: $color-bg-navy;
+  padding: $spacing-lg;
+  margin-top: 60px;
+
+  &-content {
+    text-align: center;
+    color: $color-text-light;
+  }
+
+  &-title {
+    font-family: $font-family-display;
+    font-size: 7rem;
+    font-weight: 400;
+    margin: 0;
+    letter-spacing: 0.15em;
+    @include text-outline-display;
+
+    @include mobile {
+      font-size: 3.5rem;
+    }
+  }
+
+  &-subtitle {
+    font-size: 2rem;
+    color: $color-primary;
+    margin: $spacing-sm 0 $spacing-lg;
+    font-weight: 300;
+
+    @include mobile {
+      font-size: 1.5rem;
+    }
+  }
+
+  &-button {
+    @include button-primary;
+
+    @include mobile {
+      padding: 0.8rem $spacing-lg;
+      font-size: 0.9rem;
+    }
+  }
+}

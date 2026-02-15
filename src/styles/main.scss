@@ -1,0 +1,30 @@
+// Variables and mixins
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Base styles
+@use 'base';
+
+// Components
+@use 'components/navbar';
+@use 'components/hero';
+@use 'components/teams';
+@use 'components/coaching';
+
+// App-specific styles
+.section-title {
+  font-family: $font-family-heading;
+  color: $color-primary;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: $spacing-lg;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+  @include text-outline(#fff, 2px);
+}
+
+.app {
+  min-height: 100vh;
+  background-color: $color-bg-dark;
+}
