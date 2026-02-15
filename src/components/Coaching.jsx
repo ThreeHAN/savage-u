@@ -6,7 +6,7 @@ function Coaching() {
         <div className="coaching-content">
           <div className="coach-image-wrapper">
             <img 
-              src="/coach-dre.jpg" 
+              src="./coach-dre.jpg" 
               alt="Coach Dre" 
               className="coach-image"
             />

@@ -1,7 +1,7 @@
 function Teams() {
   const teams = [
-    { id: 1, name: '14 U Baseball', image: '/savages.jpg' },
-    { id: 2, name: 'Softball', image: '/softball.jpg' },
+    { id: 1, name: '14 U Baseball', image: './savages.jpg' },
+    { id: 2, name: 'Softball', image: './lioness.jpg' },
   ];
 
   return (

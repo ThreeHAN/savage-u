@@ -7,7 +7,7 @@ function Navbar() {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-logo">
-          <img src="/savage-u-logo.png" alt="Savage U Logo" className="logo-icon" />
+          <img src="./savage-u-logo.png" alt="Savage U Logo" className="logo-icon" />
           <span className="logo-text">SAVAGEU</span>
         </div>
         <button 
