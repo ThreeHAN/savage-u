@@ -3,7 +3,7 @@ import Navbar from './components/Navbar'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import Home from './pages/Home'
-import Team14U from './pages/Team14U'
+import TeamSchedule from './pages/TeamSchedule'
 
 function App() {
   const { pathname } = useLocation()
@@ -17,7 +17,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/14u" element={<Team14U />} />
+        <Route path="/:sport/:teamName" element={<TeamSchedule />} />
       </Routes>
     </div>
   )

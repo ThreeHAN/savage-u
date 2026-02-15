@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { parse, format } from 'date-fns';
 import { client } from '../lib/sanity';
 
-export default function Practice() {
+export default function Practice({ teamId, teamName, sport }) {
   const [practices, setPractices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,8 +10,18 @@ export default function Practice() {
   useEffect(() => {
     const fetchPractices = async () => {
       try {
+        const filters = ['_type == "practice"'];
+        if (teamId) {
+          filters.push('$teamId in teams[]._ref');
+        } else {
+          if (teamName) filters.push('teamName == $teamName');
+          if (sport) filters.push('sport == $sport');
+        }
+
         const data = await client.fetch(
-          `*[_type == "practice"] | order(date asc) {
+          `*[
+            ${filters.join(' && ')}
+          ] | order(date asc) {
             _id,
             title,
             date,
@@ -26,7 +36,8 @@ export default function Practice() {
             },
             notes,
             status
-          }`
+          }`,
+          { teamId, teamName, sport }
         );
         setPractices(data);
       } catch (err) {
@@ -80,13 +91,18 @@ export default function Practice() {
     return `status status--${status}`;
   };
 
+  const formatSport = (value) =>
+    value ? value.charAt(0).toUpperCase() + value.slice(1) : '';
+
+  const scheduleTitle = [teamName, formatSport(sport)].filter(Boolean).join(' ');
+
   if (loading) return <div className="practice"><p>Loading practices...</p></div>;
   if (error) return <div className="practice"><p>Error: {error}</p></div>;
 
   return (
     <section className="practice">
       <div className="practice__container">
-        <h1 className="section-title">Practice Schedule</h1>
+        <h2 className="section-title">Practice Schedule</h2>
 
         {practices.length === 0 ? (
           <p className="practice__empty">No practices scheduled yet.</p>

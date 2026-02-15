@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { parse, format } from 'date-fns';
 import { client } from '../lib/sanity';
 
-export default function Tournaments() {
+export default function Tournaments({ teamId, teamName, sport }) {
   const [tournaments, setTournaments] = useState([]);
   const [standaloneGames, setStandaloneGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,9 +12,25 @@ export default function Tournaments() {
     const fetchData = async () => {
       try {
         const today = new Date().toISOString().slice(0, 10);
+        const tournamentFilters = ['_type == "tournament"', '(!defined(endDate) || endDate >= $today)'];
+        const gameFilters = ['_type == "game"', 'date >= $today'];
+        if (teamId) {
+          tournamentFilters.push('$teamId in teams[]._ref');
+          gameFilters.push('team._ref == $teamId');
+        } else {
+          if (teamName) {
+            tournamentFilters.push('teamName == $teamName');
+            gameFilters.push('teamName == $teamName');
+          }
+          if (sport) {
+            tournamentFilters.push('sport == $sport');
+            gameFilters.push('sport == $sport');
+          }
+        }
+
         const data = await client.fetch(
           `{
-            "tournaments": *[_type == "tournament" && (!defined(endDate) || endDate >= $today)] | order(startDate asc) {
+            "tournaments": *[${tournamentFilters.join(' && ')}] | order(startDate asc) {
               _id,
               title,
               startDate,
@@ -29,21 +45,21 @@ export default function Tournaments() {
                 parkingInfo,
                 notes
               },
-              "games": *[_type == "game" && references(^._id) && date >= $today] | order(date asc) {
+              "games": *[_type == "game" && references(^._id) && date >= $today${teamId ? ' && team._ref == $teamId' : ''}] | order(date asc) {
                 _id,
                 opponent,
                 date,
                 startTime
               }
             },
-            "standaloneGames": *[_type == "game" && !defined(tournament) && date >= $today] | order(date asc) {
+            "standaloneGames": *[${gameFilters.join(' && ')} && !defined(tournament)] | order(date asc) {
               _id,
               opponent,
               date,
               startTime
             }
           }`,
-          { today }
+          { today, teamId, teamName, sport }
         );
 
         setTournaments(data.tournaments || []);
@@ -89,13 +105,17 @@ export default function Tournaments() {
 
   const getStatusClass = (status) => `status status--${status}`;
 
+  const formatSport = (value) =>
+    value ? value.charAt(0).toUpperCase() + value.slice(1) : '';
+  const scheduleTitle = [teamName, formatSport(sport)].filter(Boolean).join(' ');
+
   if (loading) return <div className="tournaments"><p>Loading tournaments...</p></div>;
   if (error) return <div className="tournaments"><p>Error: {error}</p></div>;
 
   return (
     <section className="tournaments">
       <div className="tournaments__container">
-        <h1 className="section-title">Tournaments & Games</h1>
+        <h2 className="section-title">Tournaments & Games</h2>
 
         <div className="tournaments__section">
           <h2 className="tournaments__section-title">Tournaments</h2>

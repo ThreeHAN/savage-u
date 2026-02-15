@@ -27,7 +27,7 @@ function Navbar() {
             </a>
           </li>
           <li>
-            <Link to="/14u" onClick={() => setIsOpen(false)}>
+            <Link to="/baseball/14U" onClick={() => setIsOpen(false)}>
               14U
             </Link>
           </li>

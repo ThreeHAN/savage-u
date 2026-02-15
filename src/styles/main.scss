@@ -17,13 +17,32 @@
 .section-title {
   font-family: $font-family-heading;
   color: $color-primary;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 600;
   margin-bottom: $spacing-lg;
   letter-spacing: 3px;
   text-transform: uppercase;
   text-align: center;
   @include text-outline(#fff, 2px);
+}
+
+.team-page-title {
+  font-family: $font-family-heading;
+  color: $color-primary;
+  font-size: 2.75rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  @include text-outline(#fff, 2px);
+}
+
+.header {
+  @include flex-center;
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6));
+  background-color: $color-bg-navy;
+  margin-top: 60px;
+  padding: $spacing-lg 0;
 }
 
 .app {
