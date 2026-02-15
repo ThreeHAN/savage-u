@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { parse, format } from 'date-fns';
 import { client } from '../lib/sanity';
 
 export default function Tournaments() {
@@ -57,22 +58,27 @@ export default function Tournaments() {
     fetchData();
   }, []);
 
+  const parseLocalDate = (dateString) => {
+    if (!dateString) return null;
+    return parse(dateString, 'yyyy-MM-dd', new Date());
+  };
+
+  const parseLocalDateTime = (dateTimeString) => {
+    if (!dateTimeString) return null;
+    const safe = dateTimeString.replace('Z', '');
+    return parse(safe, "yyyy-MM-dd'T'HH:mm:ss.SSS", new Date());
+  };
+
   const formatDate = (dateString) => {
-    if (!dateString) return 'No date';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    const date = parseLocalDate(dateString);
+    if (!date) return 'No date';
+    return format(date, 'EEEE, MMMM d, yyyy');
   };
 
   const formatTime = (dateTimeString) => {
-    if (!dateTimeString) return 'No time';
-    return new Date(dateTimeString).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    const date = parseLocalDateTime(dateTimeString);
+    if (!date) return 'No time';
+    return format(date, 'h:mm a');
   };
 
   const formatDateRange = (startDate, endDate) => {
@@ -89,7 +95,7 @@ export default function Tournaments() {
   return (
     <section className="tournaments">
       <div className="tournaments__container">
-        <h1 className="tournaments__title">Tournaments & Games</h1>
+        <h1 className="section-title">Tournaments & Games</h1>
 
         <div className="tournaments__section">
           <h2 className="tournaments__section-title">Tournaments</h2>

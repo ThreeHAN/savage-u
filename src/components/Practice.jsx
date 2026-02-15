@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { parse, format } from 'date-fns';
 import { client } from '../lib/sanity';
 
 export default function Practice() {
@@ -38,30 +39,41 @@ export default function Practice() {
     fetchPractices();
   }, []);
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'short',
-      day: '2-digit',
-      month: 'short',
-    });
+  const parseLocalDate = (dateString) => {
+    if (!dateString) return null;
+    return parse(dateString, 'yyyy-MM-dd', new Date());
   };
 
-  const formatTime = (dateTimeString, { withPeriod } = {}) => {
-    return new Date(dateTimeString).toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-      ...(withPeriod === false ? { dayPeriod: undefined } : {}),
-    });
+  const parseLocalDateTime = (dateTimeString) => {
+    if (!dateTimeString) return null;
+    const safe = dateTimeString.replace('Z', '');
+    return parse(safe, "yyyy-MM-dd'T'HH:mm:ss.SSS", new Date());
+  };
+
+  const formatDate = (dateString) => {
+    const date = parseLocalDate(dateString);
+    if (!date) return '';
+    return format(date, 'EEE, dd MMM');
+  };
+
+  const formatTime = (dateTimeString) => {
+    const date = parseLocalDateTime(dateTimeString);
+    if (!date) return '';
+    return format(date, 'h:mm a');
+  };
+
+  const formatTimeNoPeriod = (dateTimeString) => {
+    const date = parseLocalDateTime(dateTimeString);
+    if (!date) return '';
+    return format(date, 'h:mm');
   };
 
   const isSamePeriod = (startTime, endTime) => {
     if (!startTime || !endTime) return false;
-    const start = new Date(startTime).getHours();
-    const end = new Date(endTime).getHours();
-    const startPeriod = start < 12 ? 'AM' : 'PM';
-    const endPeriod = end < 12 ? 'AM' : 'PM';
-    return startPeriod === endPeriod;
+    const startDate = parseLocalDateTime(startTime);
+    const endDate = parseLocalDateTime(endTime);
+    if (!startDate || !endDate) return false;
+    return format(startDate, 'a') === format(endDate, 'a');
   };
 
   const getStatusClass = (status) => {
@@ -74,7 +86,7 @@ export default function Practice() {
   return (
     <section className="practice">
       <div className="practice__container">
-        <h1 className="practice__title">Practice Schedule</h1>
+        <h1 className="section-title">Practice Schedule</h1>
 
         {practices.length === 0 ? (
           <p className="practice__empty">No practices scheduled yet.</p>
@@ -93,11 +105,7 @@ export default function Practice() {
                   <div className="practice-card__summary">
                     {formatDate(practice.date)},
                     {isSamePeriod(practice.startTime, practice.endTime)
-                      ? ` ${new Date(practice.startTime).toLocaleTimeString('en-US', {
-                          hour: 'numeric',
-                          minute: '2-digit',
-                          hour12: true,
-                        }).replace(/\s?[AP]M$/, '')}`
+                      ? ` ${formatTimeNoPeriod(practice.startTime)}`
                       : ` ${formatTime(practice.startTime)}`}
                     {' - '}
                     {formatTime(practice.endTime)}
