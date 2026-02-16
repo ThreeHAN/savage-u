@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { parse, format } from 'date-fns';
 import { client } from '../lib/sanity';
+import { createEvent } from 'ics';
 
 export default function Tournaments({ teamId, teamName, sport }) {
   const [tournaments, setTournaments] = useState([]);
@@ -81,14 +82,15 @@ export default function Tournaments({ teamId, teamName, sport }) {
 
   const parseLocalDateTime = (dateTimeString) => {
     if (!dateTimeString) return null;
-    const safe = dateTimeString.replace('Z', '');
-    return parse(safe, "yyyy-MM-dd'T'HH:mm:ss.SSS", new Date());
+    // Parse ISO string and convert to local time
+    const date = new Date(dateTimeString);
+    return date;
   };
 
   const formatDate = (dateString) => {
     const date = parseLocalDate(dateString);
     if (!date) return 'No date';
-    return format(date, 'EEEE, MMMM d, yyyy');
+    return format(date, 'EEE, MMM d');
   };
 
   const formatTime = (dateTimeString) => {
@@ -109,6 +111,71 @@ export default function Tournaments({ teamId, teamName, sport }) {
     value ? value.charAt(0).toUpperCase() + value.slice(1) : '';
   const scheduleTitle = [teamName, formatSport(sport)].filter(Boolean).join(' ');
 
+  const exportToCalendar = () => {
+    const events = [];
+    
+    tournaments.forEach((tournament) => {
+      const startDate = parseLocalDate(tournament.startDate);
+      const endDate = parseLocalDate(tournament.endDate);
+      
+      if (startDate) {
+        const event = {
+          title: tournament.title,
+          description: `Location: ${tournament.location?.name || 'TBD'}${tournament.notes ? `\nNotes: ${tournament.notes}` : ''}`,
+          start: [startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate()],
+          duration: {
+            days: endDate && tournament.endDate !== tournament.startDate 
+              ? Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1
+              : 1
+          },
+          location: tournament.location?.address || tournament.location?.name || 'TBD'
+        };
+        events.push(event);
+      }
+    });
+
+    // Generate calendar file
+    const filename = scheduleTitle ? `${scheduleTitle}-tournaments.ics` : 'tournaments.ics';
+    const filetype = 'text/plain';
+    
+    let calendarContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Savage U//Tournament Schedule//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:${scheduleTitle || 'Tournaments'}
+X-WR-TIMEZONE:UTC
+`;
+
+    events.forEach((event) => {
+      const startDate = event.start;
+      const dateStr = `${startDate[0]}${String(startDate[1]).padStart(2, '0')}${String(startDate[2]).padStart(2, '0')}`;
+      
+      calendarContent += `BEGIN:VEVENT
+UID:tournament-${event.title.replace(/\s+/g, '-')}-${dateStr}@savageu.com
+DTSTART;VALUE=DATE:${dateStr}
+DURATION:P${event.duration.days}D
+SUMMARY:${event.title}
+LOCATION:${event.location}
+DESCRIPTION:${event.description}
+END:VEVENT
+`;
+    });
+
+    calendarContent += `END:VCALENDAR`;
+
+    // Create blob and download
+    const blob = new Blob([calendarContent], { type: filetype });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   if (loading) return <div className="tournaments"><p>Loading tournaments...</p></div>;
   if (error) return <div className="tournaments"><p>Error: {error}</p></div>;
 
@@ -118,83 +185,119 @@ export default function Tournaments({ teamId, teamName, sport }) {
         <h2 className="section-title">Tournaments & Games</h2>
 
         <div className="tournaments__section">
-          <h2 className="tournaments__section-title">Tournaments</h2>
+          <div className="tournaments__header">
+            <h2 className="tournaments__section-title">Tournaments</h2>
+            {tournaments.length > 0 && (
+              <button onClick={exportToCalendar} className="tournaments__export-btn">
+                Export to Calendar
+              </button>
+            )}
+          </div>
           {tournaments.length === 0 ? (
             <p className="tournaments__empty">No tournaments available.</p>
           ) : (
-            <div className="tournaments__grid">
-              {tournaments.map((tournament) => (
-                <div key={tournament._id} className="tournament-card">
-                  <div className="tournament-card__header">
-                    <h3 className="tournament-card__title">{tournament.title}</h3>
-                    <span className={getStatusClass(tournament.status)}>
-                      {tournament.status?.replace('_', ' ') || 'upcoming'}
-                    </span>
-                  </div>
-
-                  <div className="tournament-card__details">
-                    <div className="tournament-card__dates">
-                      <strong>Dates:</strong> {formatDateRange(tournament.startDate, tournament.endDate)}
+            <>
+              {tournaments[0] && (
+                <div className="tournaments__featured">
+                  <h3 className="tournaments__featured-label">Next Tournament</h3>
+                  <div className="tournament-card">
+                    <div className="tournament-card__header">
+                      <h3 className="tournament-card__title">{tournaments[0].title}</h3>
+                      <span className={getStatusClass(tournaments[0].status)}>
+                        {tournaments[0].status?.replace('_', ' ') || 'upcoming'}
+                      </span>
                     </div>
 
-                    <div className="tournament-card__location">
-                      <strong>Location:</strong>{' '}
-                      {tournament.locationTbd
-                        ? 'TBD'
-                        : tournament.location?.name || 'TBD'}
-                      {!tournament.locationTbd && tournament.location?.address && (
-                        <p className="tournament-card__address">{tournament.location.address}</p>
-                      )}
-                      {!tournament.locationTbd && tournament.location?.parkingInfo && (
-                        <p className="tournament-card__address">
-                          Parking: {tournament.location.parkingInfo}
-                        </p>
-                      )}
-                      {!tournament.locationTbd && tournament.location?.notes && (
-                        <p className="tournament-card__address">{tournament.location.notes}</p>
-                      )}
-                      {!tournament.locationTbd && tournament.location?.mapUrl && (
-                        <a
-                          href={tournament.location.mapUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="tournament-card__map-link"
-                        >
-                          View on Maps
-                        </a>
-                      )}
-                    </div>
-
-                    {tournament.notes && (
-                      <div className="tournament-card__notes">
-                        <strong>Notes:</strong>
-                        <p>{tournament.notes}</p>
+                    <div className="tournament-card__details">
+                      <div className="tournament-card__dates">
+                        <strong>Dates:</strong> {formatDateRange(tournaments[0].startDate, tournaments[0].endDate)}
                       </div>
-                    )}
 
-                    <div className="tournament-card__games">
-                      <strong>Games:</strong>
-                      {tournament.games && tournament.games.length > 0 ? (
-                        <ul className="tournament-card__games-list">
-                          {tournament.games.map((game) => (
-                            <li key={game._id} className="tournament-card__game">
-                              <span className="tournament-card__game-opponent">
-                                vs {game.opponent}
-                              </span>
-                              <span className="tournament-card__game-time">
-                                {formatDate(game.date)} • {formatTime(game.startTime)}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="tournament-card__empty">No games scheduled yet.</p>
+                      <div className="tournament-card__location">
+                        <strong>Location:</strong>{' '}
+                        {tournaments[0].locationTbd
+                          ? 'TBD'
+                          : tournaments[0].location?.name || 'TBD'}
+                        {!tournaments[0].locationTbd && tournaments[0].location?.address && (
+                          <a
+                            href={tournaments[0].location.mapUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="tournament-card__address-link"
+                          >
+                            {tournaments[0].location.address}
+                          </a>
+                        )}
+                        {!tournaments[0].locationTbd && tournaments[0].location?.parkingInfo && (
+                          <p className="tournament-card__address">
+                            Parking: {tournaments[0].location.parkingInfo}
+                          </p>
+                        )}
+                        {!tournaments[0].locationTbd && tournaments[0].location?.notes && (
+                          <p className="tournament-card__address">{tournaments[0].location.notes}</p>
+                        )}
+                      </div>
+
+                      {tournaments[0].notes && (
+                        <div className="tournament-card__notes">
+                          <strong>Notes:</strong>
+                          <p>{tournaments[0].notes}</p>
+                        </div>
                       )}
+
+                      <div className="tournament-card__games">
+                        <strong>Games:</strong>
+                        {tournaments[0].games && tournaments[0].games.length > 0 ? (
+                          <ul className="tournament-card__games-list">
+                            {tournaments[0].games.map((game) => (
+                              <li key={game._id} className="tournament-card__game">
+                                <span className="tournament-card__game-opponent">
+                                  vs {game.opponent}
+                                </span>
+                                <span className="tournament-card__game-time">
+                                  {formatDate(game.date)} • {formatTime(game.startTime)}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="tournament-card__empty">No games scheduled yet.</p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              )}
+
+              {tournaments.length > 1 && (
+                <div className="tournaments__upcoming">
+                  <h3 className="tournaments__upcoming-label">Upcoming Tournaments</h3>
+                  <ul className="tournaments__simple-list">
+                    {tournaments.slice(1).map((tournament) => (
+                      <li key={tournament._id} className="tournaments__simple-item">
+                        <span className="tournaments__simple-title">{tournament.title}</span>
+                        <span className="tournaments__simple-date">
+                          {formatDateRange(tournament.startDate, tournament.endDate)}
+                          {tournament.location?.name && !tournament.locationTbd && (
+                            <>
+                              {' @ '}
+                              <a
+                                href={tournament.location.mapUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="tournaments__simple-location-link"
+                              >
+                                {tournament.location.name}
+                              </a>
+                            </>
+                          )}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
           )}
         </div>
 

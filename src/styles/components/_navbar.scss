@@ -22,6 +22,16 @@
     gap: $spacing-xs;
   }
 
+  &-logo-link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+
+    &:hover .navbar-logo {
+      opacity: 0.8;
+    }
+  }
+
   &-menu {
     display: flex;
     list-style: none;

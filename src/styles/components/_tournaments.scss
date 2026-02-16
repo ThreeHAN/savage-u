@@ -32,9 +32,127 @@
     color: $color-primary;
   }
 
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+
+    @include mobile {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__export-btn {
+    background: $color-primary;
+    color: $color-bg-navy;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background $transition-fast, transform $transition-fast;
+
+    &:hover {
+      background: $color-primary-dark;
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
   &__empty {
     color: $color-text-gray;
     font-size: 1.1rem;
+  }
+
+  &__featured {
+    margin-bottom: 3rem;
+    max-width: 600px;
+  }
+
+  &__featured-label,
+  &__upcoming-label {
+    font-size: 1.1rem;
+    color: $color-primary;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  &__upcoming {
+    margin-top: 2rem;
+  }
+
+  &__compact-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+
+    @include tablet {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    @include mobile {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__simple-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__simple-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 3px solid $color-primary;
+    border-radius: 4px;
+    transition: background $transition-fast;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  &__simple-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $color-text-light;
+  }
+
+  &__simple-date {
+    font-size: 0.95rem;
+    color: $color-primary;
+  }
+
+  &__simple-location {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  &__simple-location-link {
+    color: $color-primary;
+    text-decoration: none;
+    transition: text-decoration $transition-fast;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   &__grid,
@@ -109,6 +227,19 @@
     font-size: 0.95rem;
     color: $color-bg-blue;
     margin: 0.5rem 0 0 0;
+  }
+
+  &__address-link {
+    display: block;
+    font-size: 0.95rem;
+    color: $color-bg-blue;
+    margin: 0.5rem 0 0 0;
+    text-decoration: none;
+    transition: text-decoration $transition-fast;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   &__map-link {

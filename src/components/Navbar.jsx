@@ -7,10 +7,12 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <div className="navbar-logo">
-          <img src="./savage-u-logo.png" alt="Savage U Logo" className="logo-icon" />
-          <span className="logo-text">SAVAGEU</span>
-        </div>
+        <Link to="/" className="navbar-logo-link">
+          <div className="navbar-logo">
+            <img src="./savage-u-logo.png" alt="Savage U Logo" className="logo-icon" />
+            <span className="logo-text">SAVAGEU</span>
+          </div>
+        </Link>
         <button 
           className={`hamburger ${isOpen ? 'active' : ''}`}
           onClick={() => setIsOpen(!isOpen)}
@@ -22,7 +24,7 @@ function Navbar() {
         </button>
         <ul className={`navbar-menu ${isOpen ? 'active' : ''}`}>
           <li>
-            <a href="#select-teams" onClick={() => setIsOpen(false)}>
+            <a href="/#select-teams" onClick={() => setIsOpen(false)}>
               Select Teams
             </a>
           </li>

@@ -57,14 +57,15 @@ export default function Practice({ teamId, teamName, sport }) {
 
   const parseLocalDateTime = (dateTimeString) => {
     if (!dateTimeString) return null;
-    const safe = dateTimeString.replace('Z', '');
-    return parse(safe, "yyyy-MM-dd'T'HH:mm:ss.SSS", new Date());
+    // Parse ISO string and convert to local time
+    const date = new Date(dateTimeString);
+    return date;
   };
 
   const formatDate = (dateString) => {
     const date = parseLocalDate(dateString);
     if (!date) return '';
-    return format(date, 'EEE, dd MMM');
+    return format(date, 'EEE, MMM dd');
   };
 
   const formatTime = (dateTimeString) => {
@@ -119,7 +120,7 @@ export default function Practice({ teamId, teamName, sport }) {
 
                 <div className="practice-card__details">
                   <div className="practice-card__summary">
-                    {formatDate(practice.date)},
+                    {formatDate(practice.date)}
                     {isSamePeriod(practice.startTime, practice.endTime)
                       ? ` ${formatTimeNoPeriod(practice.startTime)}`
                       : ` ${formatTime(practice.startTime)}`}
@@ -128,7 +129,7 @@ export default function Practice({ teamId, teamName, sport }) {
                     {practice.location?.name ? (
                       practice.location?.mapUrl ? (
                         <>
-                          {', @ '}
+                          {' @ '}
                           <a
                             href={practice.location.mapUrl}
                             target="_blank"
@@ -139,7 +140,7 @@ export default function Practice({ teamId, teamName, sport }) {
                           </a>
                         </>
                       ) : (
-                        `, @ ${practice.location.name}`
+                        ` @ ${practice.location.name}`
                       )
                     ) : null}
                   </div>
