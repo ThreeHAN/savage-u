@@ -18,6 +18,11 @@ export default function Practice({ teamId, teamName, sport }) {
           if (sport) filters.push('sport == $sport');
         }
 
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayString = today.toISOString().split('T')[0];
+        filters.push(`date >= $todayString`);
+
         const data = await client.fetch(
           `*[
             ${filters.join(' && ')}
@@ -37,7 +42,7 @@ export default function Practice({ teamId, teamName, sport }) {
             notes,
             status
           }`,
-          { teamId, teamName, sport }
+          { teamId, teamName, sport, todayString }
         );
         setPractices(data);
       } catch (err) {

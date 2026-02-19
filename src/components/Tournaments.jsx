@@ -39,6 +39,7 @@ export default function Tournaments({ teamId, teamName, sport }) {
               locationTbd,
               status,
               notes,
+              website,
               location-> {
                 name,
                 address,
@@ -120,6 +121,7 @@ export default function Tournaments({ teamId, teamName, sport }) {
       
       if (startDate) {
         const event = {
+          id: tournament._id,
           title: tournament.title,
           description: `Location: ${tournament.location?.name || 'TBD'}${tournament.notes ? `\nNotes: ${tournament.notes}` : ''}`,
           start: [startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate()],
@@ -150,14 +152,18 @@ X-WR-TIMEZONE:UTC
     events.forEach((event) => {
       const startDate = event.start;
       const dateStr = `${startDate[0]}${String(startDate[1]).padStart(2, '0')}${String(startDate[2]).padStart(2, '0')}`;
+      const now = new Date();
+      const dtstamp = `${now.getUTCFullYear()}${String(now.getUTCMonth() + 1).padStart(2, '0')}${String(now.getUTCDate()).padStart(2, '0')}T${String(now.getUTCHours()).padStart(2, '0')}${String(now.getUTCMinutes()).padStart(2, '0')}${String(now.getUTCSeconds()).padStart(2, '0')}Z`;
       
       calendarContent += `BEGIN:VEVENT
-UID:tournament-${event.title.replace(/\s+/g, '-')}-${dateStr}@savageu.com
+UID:${event.id}@savageu.com
+DTSTAMP:${dtstamp}
 DTSTART;VALUE=DATE:${dateStr}
 DURATION:P${event.duration.days}D
 SUMMARY:${event.title}
 LOCATION:${event.location}
 DESCRIPTION:${event.description}
+SEQUENCE:0
 END:VEVENT
 `;
     });
@@ -202,7 +208,32 @@ END:VEVENT
                   <h3 className="tournaments__featured-label">Next Tournament</h3>
                   <div className="tournament-card">
                     <div className="tournament-card__header">
-                      <h3 className="tournament-card__title">{tournaments[0].title}</h3>
+                      <div className="tournament-card__title-wrapper">
+                        <h3 className="tournament-card__title">{tournaments[0].title}</h3>
+                        {tournaments[0].website && (
+                          <a
+                            href={tournaments[0].website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="tournament-card__website-icon"
+                            title="Visit tournament website"
+                          >
+                            <svg
+                              width="18"
+                              height="18"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                          </a>
+                        )}
+                      </div>
                       <span className={getStatusClass(tournaments[0].status)}>
                         {tournaments[0].status?.replace('_', ' ') || 'upcoming'}
                       </span>
