@@ -1,52 +1,21 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { createImageUrlBuilder } from '@sanity/image-url';
+import { useTeams } from '../hooks';
 import { client } from '../lib/sanity';
 
 const builder = createImageUrlBuilder(client);
 const urlFor = (source) => builder.image(source).width(800).height(600).fit('crop').auto('format').url();
 
 function Teams() {
-  const [teams, setTeams] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data: teamsData = [], isPending: loading, error } = useTeams();
+  
+  // Sort teams: baseball first, then by name
+  const teams = [...teamsData].sort((a, b) => {
+    if (a.sport === 'baseball' && b.sport !== 'baseball') return -1;
+    if (a.sport !== 'baseball' && b.sport === 'baseball') return 1;
+    return a.name.localeCompare(b.name);
+  });
 
-  useEffect(() => {
-    const fetchTeams = async () => {
-      try {
-        const data = await client.fetch(
-          `*[_type == "team"] {
-            _id,
-            name,
-            sport,
-            image {
-              asset-> {
-                url
-              }
-            }
-          }`
-        );
-        
-        // Sort teams: baseball first, then by name
-        const sortedTeams = data.sort((a, b) => {
-          // Baseball comes first
-          if (a.sport === 'baseball' && b.sport !== 'baseball') return -1;
-          if (a.sport !== 'baseball' && b.sport === 'baseball') return 1;
-          
-          // Then sort by name
-          return a.name.localeCompare(b.name);
-        });
-        
-        setTeams(sortedTeams);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTeams();
-  }, []);
 
   return (
     <section className="teams" id="select-teams">

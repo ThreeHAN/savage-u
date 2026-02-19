@@ -1,36 +1,12 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import Practice from '../components/Practice';
 import Tournaments from '../components/Tournaments';
-import { client } from '../lib/sanity';
+import { useTeamByName } from '../hooks';
 
 export default function TeamSchedule() {
   const { teamName, sport } = useParams();
-  const [team, setTeam] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data: team, isPending: loading, error } = useTeamByName(teamName, sport);
 
-  useEffect(() => {
-    const fetchTeam = async () => {
-      try {
-        const data = await client.fetch(
-          `*[_type == "team" && name == $teamName && sport == $sport][0]{
-            _id,
-            name,
-            sport
-          }`,
-          { teamName, sport }
-        );
-        setTeam(data || null);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTeam();
-  }, [teamName, sport]);
 
   if (loading) return <div className="tournaments"><p>Loading team...</p></div>;
   if (error) return <div className="tournaments"><p>Error: {error}</p></div>;
