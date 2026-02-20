@@ -1,5 +1,5 @@
 import { usePractices } from '../hooks';
-import { formatDateWithDay, formatTime, formatTimeNoPeriod, isSamePeriod } from '../lib/dateUtils';
+import { formatDateWithDayFromDateTime, formatTime, formatTimeNoPeriod, isSamePeriod } from '../lib/dateUtils';
 import { formatSport, getStatusClass } from '../lib/formatUtils';
 
 export default function Practice({ teamId, teamName, sport }) {
@@ -30,10 +30,10 @@ export default function Practice({ teamId, teamName, sport }) {
 
                 <div className="practice-card__details">
                   <div className="practice-card__summary">
-                    {formatDateWithDay(practice.date)}
-                    {isSamePeriod(practice.startTime, practice.endTime)
-                      ? ` ${formatTimeNoPeriod(practice.startTime)}`
-                      : ` ${formatTime(practice.startTime)}`}
+                  {formatDateWithDayFromDateTime(practice.startTime)}
+                  {isSamePeriod(practice.startTime, practice.endTime)
+                    ? ` ${formatTimeNoPeriod(practice.startTime)}`
+                    : ` ${formatTime(practice.startTime)}`}
                     {' - '}
                     {formatTime(practice.endTime)}
                     {practice.location?.name ? (

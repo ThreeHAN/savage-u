@@ -24,6 +24,18 @@ export const formatDateWithDay = (dateString) => {
   return format(date, 'EEE, MMM dd');
 };
 
+export const formatDateWithDayFromDateTime = (dateTimeString) => {
+  const date = parseLocalDateTime(dateTimeString);
+  if (!date) return '';
+  return format(date, 'EEE, MMM dd');
+};
+
+export const formatDateFromDateTime = (dateTimeString) => {
+  const date = parseLocalDateTime(dateTimeString);
+  if (!date) return 'No date';
+  return format(date, 'EEE, MMM d');
+};
+
 export const formatTime = (dateTimeString) => {
   const date = parseLocalDateTime(dateTimeString);
   if (!date) return 'No time';

@@ -7,7 +7,7 @@ export function useTournaments(teamId = null, teamName = null, sport = null) {
     queryFn: async () => {
       const today = new Date().toISOString().slice(0, 10);
       const tournamentFilters = ['_type == "tournament"', '(!defined(endDate) || endDate >= $today)'];
-      const gameFilters = ['_type == "game"', 'date >= $today'];
+      const gameFilters = ['_type == "game"', 'startTime >= $today'];
 
       if (teamId) {
         tournamentFilters.push('$teamId in teams[]._ref');
@@ -41,18 +41,25 @@ export function useTournaments(teamId = null, teamName = null, sport = null) {
               parkingInfo,
               notes
             },
-            "games": *[_type == "game" && references(^._id) && date >= $today${teamId ? ' && team._ref == $teamId' : ''}] | order(date asc) {
+            "games": *[_type == "game" && references(^._id) && startTime >= $today${teamId ? ' && team._ref == $teamId' : ''}] | order(startTime asc) {
               _id,
               opponent,
               date,
-              startTime
+              startTime,
+              fieldNumber,
+              location-> {
+                name
+              }
             }
           },
-          "standaloneGames": *[${gameFilters.join(' && ')} && !defined(tournament)] | order(date asc) {
+          "standaloneGames": *[${gameFilters.join(' && ')} && !defined(tournament)] | order(startTime asc) {
             _id,
             opponent,
-            date,
-            startTime
+            startTime,
+            fieldNumber,
+            location-> {
+              name
+            }
           }
         }`,
         { today, teamId, teamName, sport }

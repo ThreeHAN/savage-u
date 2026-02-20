@@ -1,6 +1,6 @@
 import { useTournaments } from '../hooks';
 import { generateCalendarFile, downloadCalendarFile } from '../lib/calendarExport';
-import { parseLocalDate, formatDate, formatTime, formatDateRange } from '../lib/dateUtils';
+import { parseLocalDate, formatTime, formatDateRange, formatDateFromDateTime } from '../lib/dateUtils';
 import { formatSport, getStatusClass } from '../lib/formatUtils';
 
 function TournamentHeader({ onExport, hasTournaments }) {
@@ -98,8 +98,14 @@ function TournamentFeatured({ tournament }) {
                   <li key={game._id} className="tournament-card__game">
                     <span className="tournament-card__game-opponent">vs {game.opponent}</span>
                     <span className="tournament-card__game-time">
-                      {formatDate(game.date)} • {formatTime(game.startTime)}
+                      {formatDateFromDateTime(game.startTime)} • {formatTime(game.startTime)}
                     </span>
+                    {game.fieldNumber && (
+                      <span className="tournament-card__game-field">Field {game.fieldNumber}</span>
+                    )}
+                    {game.location && game.location.name !== tournament.location?.name && (
+                      <span className="tournament-card__game-location">@ {game.location.name}</span>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -160,12 +166,19 @@ function StandaloneGames({ games }) {
                 <h3 className="game-card__title">vs {game.opponent}</h3>
               </div>
               <div className="game-card__details">
-                <div className="game-card__date">
-                  <strong>Date:</strong> {formatDate(game.date)}
-                </div>
                 <div className="game-card__time">
                   <strong>Time:</strong> {formatTime(game.startTime)}
                 </div>
+                {game.fieldNumber && (
+                  <div className="game-card__field">
+                    <strong>Field:</strong> {game.fieldNumber}
+                  </div>
+                )}
+                {game.location && (
+                  <div className="game-card__location">
+                    <strong>Location:</strong> {game.location.name}
+                  </div>
+                )}
               </div>
             </div>
           ))}

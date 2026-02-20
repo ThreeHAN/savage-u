@@ -21,10 +21,9 @@ export function usePractices(teamId = null, teamName = null, sport = null) {
       const data = await client.fetch(
         `*[
           ${filters.join(' && ')}
-        ] | order(date asc) {
+        ] | order(startTime asc) {
           _id,
           title,
-          date,
           startTime,
           endTime,
           location-> {
